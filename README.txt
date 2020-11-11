@@ -76,7 +76,7 @@ file and ensure that Terraform apply is successful.
 
 Click Manage Jenkins from the menu on the left of the page.
 Click Manage Nodes and Clouds from the System Configuration section.
-From your terminal, edit the variables.tf file and increase the workers-count variable 
+From your terminal, edit the variables.tf file and increase the workers-count variable
 from 1 to 0.
 
 vim variables.tf
@@ -84,3 +84,75 @@ vim variables.tf
 Run terraform apply again to apply this configuration change. Enter yes when prompted.
 
 Back in your web browser, refresh the page to verify the number of worker nodes is updated.
+
+# Additional Resources: <<< --- >>>
+
+1. You'll be spinning up a Jenkins Master node (EC2) in us-east-1 and a Jenkins Worker (EC2)
+   in us-west-2. Both these nodes will need to communicate so you'll need to set up appropriate
+   VPC peering, route table entries, and security group rules to allow that.
+
+   The Jenkins Master node's webserver listens on port 8080/tcp, and the Jenkins Worker will
+   need to be able communicate with the Jenkins Master on all ports over TCP.
+
+   You've been provided the following details for the network setup:
+
+   * us-east-1 VPC CIDR: 10.0.0.0/16
+   * us-west-2 VPC CIDR: 192.168.0.0/16
+   * us-east-1 VPC will have 2 subnets: 10.0.1.0/24, 10.0.2.0/24
+   * us-west-2 VPC will have 1 subnet: 192.168.1.0/24
+   * Both VPC's will have internet gateways attached so that instances can have internet access
+
+2. Ansible Playbooks, Jinja templates for Ansible, and a plaintext file containing the username
+   and password for your Jenkins Application have been provided to you at the following URLs:
+
+   a. Jenkins Master Ansible Playbook
+   b. Jenkins Worker Ansible Playbook
+   c. Ansible Jinja template for Jenkins Worker Setup
+   d. Ansible Jinja template for Jenkins Worker credential setup
+   e. Plaintext Jenkins Auth file
+
+3. You've been advised to create a directory named ansible_templates inside your project folder and
+maintain all Ansible related Playbooks, Jinja templates, and inventory configuration in this
+directory.
+
+4. You've further been advised to create another directory inside the ansible_templates directory
+called inventory_aws and store the Ansible dynamic inventory fetching config file there. The URL
+to the file is: Ansible Inventory Config for AWS
+
+5. You can fetch the publicly-hosted domain name provided by your company by issuing the following
+command:
+
+aws route53 list-hosted-zones | jq -r .HostedZones[].Name | egrep "cmcloud*"
+
+6. You will need to create an Application Load Balancer with 2 listeners:
+
+a. Port 443 (HTTPS)
+b. Port 80 (HTTP)
+
+7. Create and attach an ACM certificate with the port 443 listener of your ALB. You can assign any
+permissible subdomain string to your URL for the Jenkins Application. For example, if the public
+domain of your company is cmcloudlab1111.info, you can give your Jenkins DNS the URL
+jenkins.cmcloudlab111.info when generating an ACM certificate for it.
+
+8. Ensure that the port 80 listener permanently redirects all traffic to port 443.
+
+9. Your ALB will only route traffic to the Jenkins Master. The Ansible playbooks will handle setup
+of the Jenkins Application throughout so no need to worry about the application deployment.
+
+10. You'll be invoking Ansible playbooks onto their respective nodes via provisioners in their
+Terraform code resources. You can use the following general command to wait until an EC2 instance
+is in ready state to issue commands/run playbooks against it:
+
+aws --profile default ec2 wait instance-status-ok --region <EC2-Region> --instance-ids <INSTANCE-ID>
+
+11. For better integrity, you intend to save the Terraform state file generated in an S3 bucket.
+You'll need to configure a backend in Terraform and you'll also need to create the bucket before
+you run a terraform apply. Create it using:
+
+aws s3api create-bucket --bucket <your-unique-bucket-name>
+
+12. For Ansible, you've been provided with a preconfigured ansible.cfg file which needs to be 
+placed in the same folder where your Terraform template files will be. 
+You can download the preconfigured ansible.cfg from here. Please note that this ansible.cfg file 
+has the path to EC2 Dynamic Inventory configuration file hardcoded into it.
+
