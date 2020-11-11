@@ -151,8 +151,17 @@ you run a terraform apply. Create it using:
 
 aws s3api create-bucket --bucket <your-unique-bucket-name>
 
-12. For Ansible, you've been provided with a preconfigured ansible.cfg file which needs to be 
-placed in the same folder where your Terraform template files will be. 
-You can download the preconfigured ansible.cfg from here. Please note that this ansible.cfg file 
+12. For Ansible, you've been provided with a preconfigured ansible.cfg file which needs to be
+placed in the same folder where your Terraform template files will be.
+You can download the preconfigured ansible.cfg from here. Please note that this ansible.cfg file
 has the path to EC2 Dynamic Inventory configuration file hardcoded into it.
 
+# Learning Objectives:
+
+# Log in to the Terraform Controller Node EC2 Instance
+- 1. log in to the node using SSH. 
+- 2. After logging in, Execute terraform version
+
+# Clone the GitHub Repo for Terraform Code
+
+git clone https://github.com/linuxacademy/content-deploying-to-aws-ansible-terraform.git
