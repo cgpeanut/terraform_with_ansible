@@ -22,7 +22,7 @@ terraform version
 
 # Clone the GitHub Repo for Terraform Code
 
-git clone https://github.com/linuxacademy/content-deploying-to-aws-ansible-terraform.git
+git clone https://github.com/cgpeanut/terraform_with_ansible.git
 
 1. View the contents of backend.tf to view the backend information for storing state files.
 
@@ -164,4 +164,4 @@ has the path to EC2 Dynamic Inventory configuration file hardcoded into it.
 
 # Clone the GitHub Repo for Terraform Code
 
-git clone https://github.com/linuxacademy/content-deploying-to-aws-ansible-terraform.git
+git clone https://github.com/cgpeanut/terraform_with_ansible.git
